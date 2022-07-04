@@ -1,6 +1,6 @@
 package methods;
 
-public class Carculator {
+public class Calculator {
 
 	int plus(int x, int y) {
 		int result = x + y;
