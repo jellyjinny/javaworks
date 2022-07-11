@@ -20,42 +20,40 @@ public class PersonDAO {
 	//CRUD(Create, Read, Update, Delete)
 	//자료삽입
 	public void insertPerson(Person person) {
+		conn = JDBCUtil.getConnection();  
+		String sql = "INSERT INTO person (userId, userPw, name, age) values (?, ?, ?, ?)";
 		try {  //try{}catch{} 단축키 : alt + shift + z
-			conn = JDBCUtil.getConnection();  
-			String sql = "INSERT INTO person (userId, userPw, name, age) values (?, ?, ?, ?)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, person.getUserId());  //입력된 아이디 가져와서 sql에 세팅
-			pstmt.setString(2, person.getUserPw());
+			pstmt.setString(2, person.getUserPw());  //문자는 setString, 숫자는 setInt
 			pstmt.setString(3, person.getName());
-			pstmt.setInt(4, person.getAge());  //db에 저장
-			
-			pstmt.executeUpdate();
-		} catch (Exception e) {
+			pstmt.setInt(4, person.getAge());			
+			pstmt.executeUpdate();   //db에 저장
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			JDBCUtil.close(conn, pstmt);
 		}
 	}
 	
-	
 	//자료 전체 조회
 	public ArrayList<Person> getPersonList(){
 		ArrayList<Person> personList = new ArrayList<>();
-		try{
 		conn = JDBCUtil.getConnection();
 		String sql = "SELECT * FROM person";
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while(rs.next()) {
+		try{
+			pstmt = conn.prepareStatement(sql);  //sql 실행
+			rs = pstmt.executeQuery();  //데이터 반환받음
+			while(rs.next()) {  //자료가 있는 동안 반복
 				Person person = new Person();
-				person.setUserId(rs.getString("userId"));
-				person.setUserPw(rs.getString("userPw"));
+				person.setUserId(rs.getString("userId"));  //db 테이블의 칼럼 가져옴
+				person.setUserPw(rs.getString("userPw"));  //person 객체에 세팅
 				person.setName(rs.getString("name"));
 				person.setAge(rs.getInt("age"));
 				
-				personList.add(person);
+				personList.add(person);  //생성 객체를 어레이리스트에 저장
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			JDBCUtil.close(conn, pstmt, rs);
@@ -65,17 +63,17 @@ public class PersonDAO {
 	
 	
 	//자료 수정
-	/*public void updatePerson(Person person) {
+	public void updatePerson(Person person) {
+		conn = JDBCUtil.getConnection();
+		String sql = "UPDATE person SET userpw = ?, name = ?, age = ? WHERE userid = ?";
 		try {
-			conn = JDBCUtil.getConnection();
-			String sql = "UPDATE person SET userPw = ?, name = ?, age = ? WHERE userId = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, person.getUserPw());
+			pstmt.setString(1, person.getUserPw());  //수정 자료를 db의 userpw에 저장
 			pstmt.setString(2, person.getName());
 			pstmt.setInt(3, person.getAge());
 			pstmt.setString(4, person.getUserId());
-			pstmt.executeUpdate();
-		} catch (Exception e) {
+			pstmt.executeUpdate();  //db에 저장
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			JDBCUtil.close(conn, pstmt);
@@ -85,16 +83,39 @@ public class PersonDAO {
 	
 	//자료 삭제
 	public void deletePerson(Person person) {
+		conn = JDBCUtil.getConnection();
+		String sql = "DELETE FROM person WHERE userId = ?";
 		try {
-			conn = JDBCUtil.getConnection();
-			String sql = "DELETE FROM person WHERE userId = ?, name = ?, age = ? WHERE userId = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, person.getUserId());
-			pstmt.executeUpdate();
+			pstmt.setString(1, person.getUserId());  //입력된 userid 저장
+			pstmt.executeUpdate();  //db에 저장
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			JDBCUtil.close(conn, pstmt);
+		}
+	}
+	
+	//1명 조회(상세보기)
+	public Person getPerson(String userId) {
+		Person person = new Person();
+		conn = JDBCUtil.getConnection();
+		String sql = "SELECT * FROM person WHERE userid = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId); //입력된 userID를 저장
+			rs = pstmt.executeQuery();  //검색된 자료 반환
+			if(rs.next()) { //자료가 있으면
+				person.setUserId(rs.getString("userid")); //db에 있는 userid 가져옴
+				person.setUserPw(rs.getString("userpw"));
+				person.setName(rs.getString("name"));
+				person.setAge(rs.getInt("age"));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			JDBCUtil.close(conn, pstmt);
-		}
-	}*/
+			JDBCUtil.close(conn, pstmt, rs);
+		}	
+		return person;
+	}
 }
