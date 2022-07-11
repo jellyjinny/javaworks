@@ -19,9 +19,9 @@ public class PersonMain {
 			
 		//자료 수정
 		Person p2 = new Person();
-		p2.setUserId("today");
-		p2.setUserPw("today11");  //비번수정
-		p2.setName("투데이");      //이름수정
+		p2.setUserId("today");     //아이디 변경 불가(기본키)
+		p2.setUserPw("today11");   //비번수정
+		p2.setName("투데이");        //이름수정
 		p2.setAge(35);
 		
 		dao.updatePerson(p2);  //자료 수정 메소드 호출

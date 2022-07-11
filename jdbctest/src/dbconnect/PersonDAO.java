@@ -6,9 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 import dbconnect.common.JDBCUtil;
+
 
 //DAO(Data Access Object) DB 작업을 수행하는 코드
 public class PersonDAO {
@@ -16,19 +15,19 @@ public class PersonDAO {
 	private Connection conn = null;
 	private PreparedStatement pstmt = null;
 	private ResultSet rs = null;
-	
+
 	//CRUD(Create, Read, Update, Delete)
-	//자료삽입
+	//자료 삽입
 	public void insertPerson(Person person) {
-		conn = JDBCUtil.getConnection();  
-		String sql = "INSERT INTO person (userId, userPw, name, age) values (?, ?, ?, ?)";
-		try {  //try{}catch{} 단축키 : alt + shift + z
+		conn = JDBCUtil.getConnection();
+		String sql = "INSERT INTO person(userid, userpw, name, age) VALUES (?, ?, ?, ?)";
+		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, person.getUserId());  //입력된 아이디 가져와서 sql에 세팅
 			pstmt.setString(2, person.getUserPw());  //문자는 setString, 숫자는 setInt
 			pstmt.setString(3, person.getName());
-			pstmt.setInt(4, person.getAge());			
-			pstmt.executeUpdate();   //db에 저장
+			pstmt.setInt(4, person.getAge());
+			pstmt.executeUpdate();  //db에 저장
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -36,17 +35,19 @@ public class PersonDAO {
 		}
 	}
 	
+	
 	//자료 전체 조회
 	public ArrayList<Person> getPersonList(){
 		ArrayList<Person> personList = new ArrayList<>();
+		//db 연결
 		conn = JDBCUtil.getConnection();
 		String sql = "SELECT * FROM person";
-		try{
+		try {
 			pstmt = conn.prepareStatement(sql);  //sql 실행
-			rs = pstmt.executeQuery();  //데이터 반환받음
+			rs = pstmt.executeQuery();   //데이터 반환받음
 			while(rs.next()) {  //자료가 있는 동안 반복
 				Person person = new Person();
-				person.setUserId(rs.getString("userId"));  //db 테이블의 칼럼 가져옴
+				person.setUserId(rs.getString("userid"));  //db 테이블의 칼럼 가져옴
 				person.setUserPw(rs.getString("userPw"));  //person 객체에 세팅
 				person.setName(rs.getString("name"));
 				person.setAge(rs.getInt("age"));
@@ -60,7 +61,7 @@ public class PersonDAO {
 		}
 		return personList;
 	}
-	
+		
 	
 	//자료 수정
 	public void updatePerson(Person person) {
@@ -98,7 +99,7 @@ public class PersonDAO {
 	
 	//1명 조회(상세보기)
 	public Person getPerson(String userId) {
-		Person person = new Person();
+		Person person = new Person();  // //새로운 객체 생성
 		conn = JDBCUtil.getConnection();
 		String sql = "SELECT * FROM person WHERE userid = ?";
 		try {
