@@ -22,4 +22,8 @@ public class MyQueue {
 		}
 		return arrayQueue.remove(0);
 	}
+	
+	public int getSize() {
+		return arrayQueue.size();
+	}
 }

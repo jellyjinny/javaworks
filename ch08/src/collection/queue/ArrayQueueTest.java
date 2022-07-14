@@ -11,6 +11,8 @@ public class ArrayQueueTest {
 		queue.enQueue("B"); //1
 		queue.enQueue("C"); //2
 		
+		System.out.println("총 객체수: " + queue.getSize());
+		
 		//자료 꺼내기(삭제) (A-B-C 순서로 삭제됨)
 		System.out.println(queue.deQueue());
 		System.out.println(queue.deQueue());
